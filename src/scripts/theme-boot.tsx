@@ -5,6 +5,9 @@
  * Runs early in <head> to apply the correct data attributes before hydration,
  * preventing layout or theme flicker and keeping RootLayout fully static.
  */
+
+import Script from "next/script";
+
 import { PREFERENCE_REGISTRY } from "@/lib/preferences/preferences-config";
 
 export function ThemeBootScript() {
@@ -20,7 +23,10 @@ export function ThemeBootScript() {
           var match = document.cookie.split("; ").find(function(c) {
             return c.startsWith(name + "=");
           });
-          return match ? decodeURIComponent(match.split("=")[1]) : null;
+
+          return match
+            ? decodeURIComponent(match.split("=")[1])
+            : null;
         }
 
         function readLocal(name) {
@@ -39,11 +45,16 @@ export function ThemeBootScript() {
             value = readLocal(key);
           }
 
-          if (!value && (mode === "client-cookie" || mode === "server-cookie")) {
+          if (
+            !value &&
+            (mode === "client-cookie" || mode === "server-cookie")
+          ) {
             value = readCookie(key);
           }
 
-          return definition.values.indexOf(value) >= 0 ? value : definition.defaultValue;
+          return definition.values.indexOf(value) >= 0
+            ? value
+            : definition.defaultValue;
         }
 
         var preferences = {};
@@ -57,22 +68,24 @@ export function ThemeBootScript() {
         });
 
         var mode = preferences.theme_mode;
+
         var resolvedMode =
           mode === "system" && window.matchMedia
-            ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+            ? window.matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
             : mode === "dark"
               ? "dark"
               : "light";
 
         root.classList.toggle("dark", resolvedMode === "dark");
         root.style.colorScheme = resolvedMode;
-
       } catch (e) {
         console.warn("ThemeBootScript error:", e);
       }
     })();
   `;
 
-  /* biome-ignore lint/security/noDangerouslySetInnerHtml: required for pre-hydration boot script */
-  return <script dangerouslySetInnerHTML={{ __html: code }} />;
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: Theme initialization script is generated locally and contains no user input.
+  return <Script id="theme-boot" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: code }} />;
 }
