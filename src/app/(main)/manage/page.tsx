@@ -2,6 +2,8 @@ import { AuthGuard } from "@/components/auth-guard";
 import { ModeratorNav } from "@/components/moderator-nav";
 import { WeekManagement } from "@/components/week-management";
 
+export const dynamic = "force-dynamic";
+
 export default function ManagePage() {
   return (
     <AuthGuard>

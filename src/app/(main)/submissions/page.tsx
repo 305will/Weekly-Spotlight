@@ -3,6 +3,8 @@ import { ModeratorNav } from "@/components/moderator-nav";
 import { SubmissionVoting } from "@/components/submission-voting";
 import { supabase } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+
 export default async function SubmissionsPage() {
   const { data: currentWeek, error: weekError } = await supabase
     .from("weeks")
