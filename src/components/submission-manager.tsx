@@ -81,9 +81,7 @@ export function SubmissionManager({ submissions, currentWeek, votingOpen }: Subm
     }
 
     const trimmedTeamName = teamName.trim();
-
     const trimmedCreatorName = creatorName.trim();
-
     const trimmedDiscordUrl = discordUrl.trim();
 
     if (!trimmedTeamName || !trimmedCreatorName || !trimmedDiscordUrl) {
@@ -157,20 +155,32 @@ export function SubmissionManager({ submissions, currentWeek, votingOpen }: Subm
       return;
     }
 
+    setSaving(true);
     setMessage("");
 
-    const { error } = await supabase.from("submissions").delete().eq("id", submission.id);
+    const { data, error } = await supabase.from("submissions").delete().eq("id", submission.id).select("id");
 
     if (error) {
       setMessage(`Could not remove submission: ${error.message}`);
+      setSaving(false);
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      setMessage("Submission was not removed. Supabase did not allow the delete.");
+      setSaving(false);
       return;
     }
 
     if (editingId === submission.id) {
-      resetForm();
+      setTeamName("");
+      setCreatorName("");
+      setDiscordUrl("");
+      setEditingId(null);
     }
 
     setMessage("Submission removed successfully.");
+    setSaving(false);
 
     router.refresh();
   };
