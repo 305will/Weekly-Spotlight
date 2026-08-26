@@ -46,6 +46,13 @@ export function WeekManagement() {
     }
 
     setCurrentWeek(data);
+
+    const nextWeekNumber = data.week_number + 1;
+
+    setNewWeekNumber(String(nextWeekNumber));
+
+    setNewWeekTitle(`Weekly Spotlight - Week ${nextWeekNumber}`);
+
     setLoading(false);
   }, []);
 
@@ -131,9 +138,6 @@ export function WeekManagement() {
       setSaving(false);
       return;
     }
-
-    setNewWeekNumber("");
-    setNewWeekTitle("");
 
     setMessage(`Week ${parsedWeekNumber} started successfully.`);
 
@@ -234,7 +238,7 @@ export function WeekManagement() {
                   setNewWeekTitle("");
                 }
               }}
-              placeholder="5"
+              placeholder="6"
               type="number"
               value={newWeekNumber}
             />
@@ -250,7 +254,7 @@ export function WeekManagement() {
               disabled={saving}
               id="new-week-title"
               onChange={(event) => setNewWeekTitle(event.target.value)}
-              placeholder="Weekly Spotlight - Week 5"
+              placeholder="Weekly Spotlight - Week 6"
               type="text"
               value={newWeekTitle}
             />
